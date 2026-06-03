@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FinControl | Controle Financeiro</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+
+<section class="auth-screen" id="auth-screen">
+    <div class="auth-left">
+        <span class="auth-badge">Finanças pessoais</span>
+        <h1>Organize sua vida financeira com o FinControl</h1>
+        <p>
+            Cadastre receitas, despesas, acompanhe metas, visualize gráficos
+            e mantenha seu dinheiro sob controle de forma simples e moderna.
+        </p>
+
+        <div class="auth-benefits">
+            <div>📊 Dashboard inteligente</div>
+            <div>🔐 Acesso com verificação</div>
+            <div>💾 Dados salvos no navegador</div>
+        </div>
+    </div>
+
+    <div class="auth-card">
+        <h2 id="auth-title">Entrar na conta</h2>
+        <p id="auth-subtitle">Acesse seu painel financeiro.</p>
+
+        <div id="login-area">
+            <input type="text" id="login-user" placeholder="Usuário">
+            <input type="password" id="login-password" placeholder="Senha">
+
+            <button onclick="login()">Entrar</button>
+
+            <p class="auth-switch">
+                Ainda não tem conta?
+                <button onclick="showRegister()">Criar conta</button>
+            </p>
+        </div>
+
+        <div id="register-area" class="hidden">
+            <input type="text" id="register-user" placeholder="Nome de usuário">
+            <input type="email" id="register-email" placeholder="E-mail">
+            <input type="password" id="register-password" placeholder="Senha">
+
+            <button onclick="generateVerificationCode()">Criar conta</button>
+
+            <p class="auth-switch">
+                Já tem conta?
+                <button onclick="showLogin()">Entrar</button>
+            </p>
+        </div>
+
+        <div id="verify-area" class="hidden">
+            <div class="email-demo">
+                <strong>Código enviado para o e-mail:</strong>
+                <span id="demo-email"></span>
+
+                <small>
+                    Demonstração front-end: use o código abaixo para confirmar.
+                </small>
+
+                <div id="demo-code"></div>
+            </div>
+
+            <input type="text" id="verify-code" maxlength="6" placeholder="Digite o código de 6 caracteres">
+
+            <button onclick="confirmCode()">Confirmar cadastro</button>
+
+            <p class="auth-switch">
+                <button onclick="showRegister()">Voltar</button>
+            </p>
+        </div>
+    </div>
+</section>
+
+<div class="app" id="app">
+
+    <header class="header">
+        <div>
+            <span class="app-badge">Controle financeiro pessoal</span>
+            <h1>💰 FinControl</h1>
+            <p id="welcome-user">Bem-vindo ao seu painel financeiro.</p>
+        </div>
+
+        <div class="header-actions">
+            <button id="theme-toggle">🌙 Tema</button>
+            <button onclick="logout()" class="danger">Sair</button>
+        </div>
+    </header>
+
+    <section class="dashboard">
+        <div class="card saldo">
+            <span>Saldo Total</span>
+            <h3 id="balance">R$ 0,00</h3>
+        </div>
+
+        <div class="card receita">
+            <span>Receitas</span>
+            <h3 id="income">R$ 0,00</h3>
+        </div>
+
+        <div class="card despesa">
+            <span>Despesas</span>
+            <h3 id="expense">R$ 0,00</h3>
+        </div>
+
+        <div class="card extra">
+            <span>Movimentações</span>
+            <h3 id="total-count">0</h3>
+        </div>
+    </section>
+
+    <section class="alert-box" id="financial-alert"></section>
+
+    <section class="main-grid">
+        <div class="panel">
+            <h2>Nova movimentação</h2>
+
+            <form id="transaction-form">
+                <input type="text" id="description" placeholder="Descrição" required>
+                <input type="number" id="amount" placeholder="Valor" step="0.01" required>
+
+                <select id="type">
+                    <option value="income">Receita</option>
+                    <option value="expense">Despesa</option>
+                </select>
+
+                <select id="category"></select>
+
+                <input type="date" id="date" required>
+
+                <button type="submit">Adicionar movimentação</button>
+            </form>
+        </div>
+
+        <div class="panel">
+            <h2>Categorias</h2>
+
+            <div class="inline-form">
+                <input type="text" id="new-category" placeholder="Nova categoria">
+                <button onclick="addCategory()">Adicionar</button>
+            </div>
+
+            <div id="category-list" class="category-list"></div>
+        </div>
+    </section>
+
+    <section class="main-grid">
+        <div class="panel chart-box">
+            <h2>Receitas x Despesas</h2>
+            <canvas id="finance-chart"></canvas>
+        </div>
+
+        <div class="panel chart-box">
+            <h2>Gastos por Categoria</h2>
+            <canvas id="category-chart"></canvas>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>Meta financeira</h2>
+
+        <div class="inline-form">
+            <input type="text" id="goal-name" placeholder="Nome da meta">
+            <input type="number" id="goal-value" placeholder="Valor da meta">
+            <button onclick="saveGoal()">Salvar</button>
+        </div>
+
+        <div class="goal-box">
+            <h3 id="goal-title">Nenhuma meta definida</h3>
+
+            <div class="progress">
+                <div id="goal-progress"></div>
+            </div>
+
+            <p id="goal-info">Defina uma meta para acompanhar seu progresso.</p>
+        </div>
+    </section>
+
+    <section class="filters">
+        <input type="text" id="search" placeholder="Pesquisar movimentação...">
+
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="income">Receitas</button>
+        <button class="filter-btn" data-filter="expense">Despesas</button>
+
+        <button onclick="exportPDF()">PDF</button>
+        <button onclick="exportCSV()">Excel</button>
+        <button onclick="clearAll()" class="danger">Limpar</button>
+    </section>
+
+    <section class="panel">
+        <h2>Histórico</h2>
+        <ul id="transaction-list"></ul>
+    </section>
+
+    <footer>
+        <p>Desenvolvido por <strong>William Campos</strong></p>
+
+        <div>
+            <a href="https://github.com/wlzero7" target="_blank">GitHub</a>
+            <a href="https://www.linkedin.com/in/william7campos/" target="_blank">LinkedIn</a>
+            <a href="https://wlzero7.github.io/portfolio-william/" target="_blank">Portfólio</a>
+        </div>
+    </footer>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
