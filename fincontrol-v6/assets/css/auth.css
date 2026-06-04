@@ -1,0 +1,90 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #08111f, #0f2a44);
+    color: white;
+}
+
+.auth-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.auth-card {
+    width: 100%;
+    max-width: 430px;
+    background: rgba(15, 23, 42, 0.95);
+    padding: 35px;
+    border-radius: 24px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+}
+
+.auth-card h1 {
+    margin-bottom: 20px;
+    font-size: 2rem;
+}
+
+.auth-card h2 {
+    margin-bottom: 8px;
+}
+
+.auth-card p {
+    color: #cbd5e1;
+    margin-bottom: 25px;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 14px;
+    border: none;
+    border-radius: 12px;
+    outline: none;
+    font-size: 1rem;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #38bdf8, #2563eb);
+    color: white;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+a {
+    color: #38bdf8;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.alert {
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+
+.error {
+    background: #dc2626;
+}
+
+.success {
+    background: #16a34a;
+}
+
+.info {
+    background: #2563eb;
+}
